@@ -26,8 +26,23 @@ class SaleItem extends Model
         return $this->belongsTo(Course::class);
     }
 
-    public function batch()
+    public function courseBatch()
     {
         return $this->belongsTo(CourseBatch::class, 'course_batch_id');
     }
+    protected static function booted()
+    {
+        static::created(function ($item) {
+            $item->sale->updateTotalAmount(); // ✅ Обновляем сумму после создания позиции
+        });
+
+        static::updated(function ($item) {
+            $item->sale->updateTotalAmount(); // ✅ Обновляем сумму после редактирования
+        });
+
+        static::deleted(function ($item) {
+            $item->sale->updateTotalAmount(); // ✅ Обновляем сумму после удаления
+        });
+    }
+
 }

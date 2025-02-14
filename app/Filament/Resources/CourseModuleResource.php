@@ -39,7 +39,9 @@ class CourseModuleResource extends Resource
 
             Forms\Components\TextInput::make('order')
                 ->label('Порядок')
-                ->numeric(),
+                ->numeric()
+                ->default(1) // ✅ Гарантируем, что `order` не будет NULL
+                ->required(),
         ]);
     }
 

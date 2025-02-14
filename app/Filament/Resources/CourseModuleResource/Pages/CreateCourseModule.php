@@ -43,4 +43,21 @@ class CreateCourseModule extends CreateRecord
             ]);
         }
     }
+
+    public function getBreadcrumb(): string
+    {
+        $moduleId = request()->query('course_module');
+        $module = CourseModule::find($moduleId);
+
+        if ($module && $module->course) {
+            return "Курсы / {$module->course->title} / {$module->title} / Новый урок";
+        }
+
+        return "Новый урок";
+    }
+
+    public function getTitle(): string
+    {
+        return $this->getBreadcrumb();
+    }
 }

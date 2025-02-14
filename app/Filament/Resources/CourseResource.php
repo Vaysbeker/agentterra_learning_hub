@@ -59,10 +59,16 @@ class CourseResource extends Resource
 
                 Action::make('Содержание')
                     ->label('Содержание')
-                    ->url(fn ($record) => CourseModuleResource::getUrl('index', ['course' => $record->id])) // ✅ Теперь точно передаём ID
+                    ->url(fn ($record) => CourseModuleResource::getUrl('index', ['course' => $record->id]))
+                    ->openUrlInNewTab(false),
+
+                Action::make('Потоки')
+                    ->label('Потоки')
+                    ->url(fn ($record) => CourseBatchResource::getUrl('index', ['course_id' => $record->id]))
                     ->openUrlInNewTab(false),
             ]);
     }
+
 
     public static function canViewAny(): bool
     {

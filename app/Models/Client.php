@@ -13,4 +13,23 @@ class Client extends Authenticatable
     protected $fillable = ['name', 'email', 'phone', 'password'];
 
     protected $hidden = ['password'];
+
+    public function sales()
+    {
+        return $this->hasMany(Sale::class);
+    }
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'sale_items', 'client_id', 'course_id')
+            ->withPivot(['course_batch_id']); // ✅ Добавляем связь с потоками
+    }
+
+    public function courseBatches()
+    {
+        return $this->hasManyThrough(CourseBatch::class, SaleItem::class, 'client_id', 'id', 'id', 'course_batch_id');
+    }
+
+
+
 }

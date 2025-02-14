@@ -14,11 +14,10 @@ class CreateCourseLesson extends CreateRecord
 
     protected function handleRecordCreation(array $data): Model
     {
-        $data['course_module_id'] = request()->query('course_module');
+        // Получаем course_module_id из запроса или устанавливаем значение по умолчанию
+        $data['course_module_id'] = request()->query('course_module') ?? $data['course_module_id'] ?? 1; // ✅ Убедимся, что поле не NULL
 
-        $lesson = CourseLesson::create($data);
-
-        return $lesson;
+        return CourseLesson::create($data);
     }
 
     protected function getRedirectUrl(): string

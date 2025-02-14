@@ -9,10 +9,14 @@ class Course extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['title', 'order'];
+    protected $fillable = ['course_id', 'title', 'order'];
 
     public function modules()
     {
-        return $this->hasMany(CourseModule::class)->orderBy('order');
+        return $this->hasMany(CourseModule::class)->orderBy('order', 'asc');
+    }
+    public function course()
+    {
+        return $this->hasOneThrough(Course::class, CourseModule::class, 'id', 'id', 'course_module_id', 'course_id');
     }
 }

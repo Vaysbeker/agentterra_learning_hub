@@ -55,8 +55,8 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('id')->label('ID')->sortable(),
                 TextColumn::make('name')->label('ФИО')->searchable(),
-                TextColumn::make('city')->label('Город')->searchable(),
-                TextColumn::make('phone')->label('Телефон')->searchable(),
+              //  TextColumn::make('city')->label('Город')->searchable(),
+              //  TextColumn::make('phone')->label('Телефон')->searchable(),
                 TextColumn::make('email')->label('Email')->searchable(),
                 TextColumn::make('roles.name')->label('Роли')->sortable()->badge(),
 

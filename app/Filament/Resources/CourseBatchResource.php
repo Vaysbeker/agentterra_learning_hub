@@ -47,18 +47,23 @@ class CourseBatchResource extends Resource
     public static function table(Tables\Table $table): Tables\Table
     {
         return $table
+            ->query(fn () => CourseBatch::query()->when(request()->has('course_id'), function ($query) {
+                $query->where('course_id', request('course_id'));
+            }))
             ->columns([
-                TextColumn::make('id')->label('ID')->sortable(),
-                TextColumn::make('course.title')->label('Курс')->searchable(),
-                TextColumn::make('name')->label('Группа')->sortable(),
-                TextColumn::make('start_date')->label('Начало')->sortable(),
-                TextColumn::make('end_date')->label('Окончание')->sortable(),
+                Tables\Columns\TextColumn::make('id')->label('ID')->sortable(),
+                Tables\Columns\TextColumn::make('course.title')->label('Курс')->searchable(),
+                Tables\Columns\TextColumn::make('name')->label('Группа')->sortable(),
+                Tables\Columns\TextColumn::make('start_date')->label('Начало')->sortable(),
+                Tables\Columns\TextColumn::make('end_date')->label('Окончание')->sortable(),
             ])
             ->actions([
-                EditAction::make(),
-                DeleteAction::make(),
+                Tables\Actions\EditAction::make(),
+                Tables\Actions\DeleteAction::make(),
             ]);
     }
+
+
 
     public static function getPages(): array
     {
@@ -68,4 +73,16 @@ class CourseBatchResource extends Resource
             'edit' => Pages\EditCourseBatch::route('/{record}/edit'),
         ];
     }
+    protected function getHeaderActions(): array
+    {
+        return request()->has('course_id')
+            ? [
+                Tables\Actions\Action::make('back')
+                    ->label('Назад к курсам')
+                    ->url(fn () => CourseResource::getUrl('index'))
+                    ->icon('heroicon-o-arrow-left'),
+            ]
+            : [];
+    }
+
 }

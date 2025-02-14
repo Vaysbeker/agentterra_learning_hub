@@ -2,10 +2,12 @@
 namespace App\Filament\Resources\SaleResource\Pages;
 
 use App\Filament\Resources\SaleResource;
+use App\Models\Sale;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Forms;
 use App\Models\Client;
 use App\Models\Course;
+use Illuminate\Database\Eloquent\Model;
 use App\Models\CourseBatch;
 use Illuminate\Support\Carbon;
 
@@ -18,9 +20,9 @@ class CreateSale extends CreateRecord
         return $form->schema([
             Forms\Components\TextInput::make('id')
                 ->label('№№ продажи')
-                ->required()
                 ->default(fn () => \App\Models\Sale::max('id') + 1)
-                ->disabled(),
+                ->disabled()
+                ->required(),
 
             Forms\Components\DatePicker::make('sale_date')
                 ->label('Дата продажи')
@@ -29,39 +31,24 @@ class CreateSale extends CreateRecord
 
             Forms\Components\Repeater::make('sale_items')
                 ->label('Добавить покупателей')
-                ->default([]) // ✅ Гарантируем, что `sale_items` всегда массив
+                ->default([['client_id' => null, 'course_id' => null, 'price' => null]]) // ✅ Добавляем пустую строку при клике
                 ->schema([
                     Forms\Components\Select::make('client_id')
                         ->label('ФИО клиента')
                         ->options(Client::pluck('name', 'id'))
                         ->searchable()
-                        ->required()
-                        ->validationMessages([
-                            'required' => 'ФИО клиента обязательно.',
-                        ]), // ✅ Сообщение об ошибке
+                        ->nullable(), // ✅ Разрешаем пустое значение при добавлении
 
                     Forms\Components\Select::make('course_id')
                         ->label('Курс')
                         ->options(Course::pluck('title', 'id'))
-                        ->searchable()
-                        ->required()
-                        ->validationMessages([
-                            'required' => 'Выберите курс.',
-                        ]), // ✅ Сообщение об ошибке
-
-                    Forms\Components\Select::make('course_batch_id')
-                        ->label('Поток / Без потока')
-                        ->options(fn () => CourseBatch::pluck('name', 'id'))
                         ->searchable()
                         ->nullable(),
 
                     Forms\Components\TextInput::make('price')
                         ->label('Цена')
                         ->numeric()
-                        ->required()
-                        ->validationMessages([
-                            'required' => 'Укажите цену.',
-                        ]), // ✅ Сообщение об ошибке
+                        ->nullable(), // ✅ Разрешаем пустое значение при добавлении
                 ])
                 ->reorderable()
                 ->addable()
@@ -76,6 +63,30 @@ class CreateSale extends CreateRecord
         ]);
     }
 
+    protected function handleRecordCreation(array $data): Model
+    {
+        // ✅ Переносим `client_id` и `course_id` из `sale_items` в корневой уровень
+        if (!empty($data['sale_items']) && is_array($data['sale_items'])) {
+            $firstItem = $data['sale_items'][0] ?? null;
+
+            if ($firstItem && isset($firstItem['client_id'], $firstItem['course_id'])) {
+                $data['client_id'] = (int) $firstItem['client_id'];
+                $data['course_id'] = (int) $firstItem['course_id'];
+            } else {
+                throw new \Exception('ФИО клиента и курс обязательны.');
+            }
+        } else {
+            throw new \Exception('ФИО клиента и курс обязательны.');
+        }
+
+        // ✅ Проверяем, что `client_id` и `course_id` присутствуют перед сохранением
+
+        // ✅ Сохраняем продажу в базу
+        return Sale::create($data);
+    }
+
+
+
     public function getTitle(): string
     {
         $id = $this->form->getState()['id'] ?? null;
@@ -83,4 +94,5 @@ class CreateSale extends CreateRecord
 
         return $id ? "Продажа №{$id} / {$date}" : "Создание продажи";
     }
+
 }
