@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Model;
 
 class CourseLesson extends Model
@@ -28,6 +29,11 @@ class CourseLesson extends Model
     public function course()
     {
         return $this->belongsTo(Course::class, 'course_id'); // ✅ Добавляем связь с курсом
+    }
+
+    public function test(): HasOne
+    {
+        return $this->hasOne(Test::class, 'lesson_id');
     }
 
     protected $casts = [

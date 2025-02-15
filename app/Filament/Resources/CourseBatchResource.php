@@ -18,8 +18,10 @@ use App\Models\Course;
 class CourseBatchResource extends Resource
 {
     protected static ?string $model = CourseBatch::class;
-    protected static ?string $navigationLabel = 'Группы доступа';
     protected static ?string $navigationGroup = 'Обучение';
+    protected static ?string $navigationLabel = 'Поток курсов';
+    protected static ?string $navigationParentItem = 'Курсы';
+
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
     public static function form(Forms\Form $form): Forms\Form

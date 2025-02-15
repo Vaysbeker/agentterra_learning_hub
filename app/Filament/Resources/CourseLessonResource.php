@@ -18,6 +18,9 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Actions\DeleteAction;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
+use App\Models\Test;
+use Filament\Notifications\Notification;
 
 
 class CourseLessonResource extends Resource
@@ -92,30 +95,40 @@ class CourseLessonResource extends Resource
         return false; // ✅ Отключает отображение Breadcrumbs
     }
 
-    public static function table(Tables\Table $table): Tables\Table
-    {
+    public static function table(Tables\Table $table): Tables\Table {
         return $table
             ->columns([
                 TextColumn::make('id')->label('№')->sortable(),
                 TextColumn::make('course.title')->label('Курс')->sortable()->searchable(),
                 TextColumn::make('module.title')->label('Модуль')->sortable()->searchable(),
                 TextColumn::make('title')->label('Название урока')->sortable()->searchable(),
-                TextColumn::make('created_at')
-                    ->label('Дата создания')
-                    ->sortable()
-                    ->formatStateUsing(fn ($state) => \Carbon\Carbon::parse($state)->format('d.m.Y H:i')),
-            ])
-            ->filters([
-                SelectFilter::make('course_id')
-                    ->label('Фильтр по курсам')
-                    ->relationship('course', 'title')
-                    ->preload(),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make(),
+
+                // ✅ Кнопка "Создать тест" или "Редактировать тест"
+                Action::make('manage_test')
+                    ->label(fn ($record) => $record->test ? 'Редактировать тест' : 'Создать тест')
+                    ->icon(fn ($record) => $record->test ? 'heroicon-o-pencil' : 'heroicon-o-document-text')
+                    ->action(function ($record) {
+                        if (!$record->test) {
+                            $test = Test::create(['lesson_id' => $record->id]);
+
+                            Notification::make()
+                                ->title('Тест создан!')
+                                ->success()
+                                ->send();
+
+                            return redirect()->to(TestResource::getUrl('edit', ['record' => $test->id]));
+                        } else {
+                            return redirect()->to(TestResource::getUrl('edit', ['record' => $record->test->id]));
+                        }
+                    })
+                    ->color(fn ($record) => $record->test ? 'primary' : 'success'),
             ]);
     }
+
 
     public static function getRelations(): array
     {

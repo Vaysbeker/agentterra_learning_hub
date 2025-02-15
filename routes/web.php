@@ -13,3 +13,4 @@ Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/admin/course-lessons/{record}/view', [ViewCourseLesson::class, '__invoke'])
     ->name('filament.admin.resources.course-lessons.view');
 
+Route::post('/lesson/{lessonId}/submit-test', [TestResultController::class, 'submitTest']);

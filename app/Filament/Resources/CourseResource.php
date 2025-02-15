@@ -23,6 +23,8 @@ class CourseResource extends Resource
 {
     protected static ?string $navigationLabel = 'Курсы';
     protected static ?string $model = Course::class;
+    protected static ?string $navigationGroup = 'Обучение';
+
     protected static ?string $navigationIcon = 'heroicon-o-video-camera';
 
     public static function form(Forms\Form $form): Forms\Form

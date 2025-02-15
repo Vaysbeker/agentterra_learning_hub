@@ -20,6 +20,8 @@ class PermissionResource extends Resource
     protected static ?string $model = Permission::class;
     protected static ?string $navigationLabel = 'Доступы';
     protected static ?string $navigationGroup = 'База';
+    protected static ?string $navigationParentItem = 'Пользователи';
+
     protected static ?string $navigationIcon = 'heroicon-o-lock-closed';
 
     public static function form(Forms\Form $form): Forms\Form

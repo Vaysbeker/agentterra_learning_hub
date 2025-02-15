@@ -16,6 +16,8 @@ use Illuminate\Support\Facades\Hash;
 class ClientResource extends Resource
 {
     protected static ?string $model = Client::class;
+    protected static ?string $navigationGroup = 'База';
+
     protected static ?string $navigationLabel = 'Клиенты';
     protected static ?string $navigationIcon = 'heroicon-o-user-group';
 
