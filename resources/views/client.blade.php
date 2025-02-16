@@ -3,12 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Laravel с Vue 3</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <title>Клиентская панель</title>
+    @vite('resources/js/client-dashboard/src/main.js')
 </head>
 <body>
-<div id="app">
-    <example-component></example-component>
-</div>
+<div id="app"></div>
 </body>
 </html>

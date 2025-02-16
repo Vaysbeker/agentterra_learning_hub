@@ -27,10 +27,6 @@ return [
     | Of course, a great default configuration has been defined for you
     | which utilizes session storage plus the Eloquent user provider.
     |
-    | All authentication guards have a user provider, which defines how the
-    | users are actually retrieved out of your database or other storage
-    | system used by the application. Typically, Eloquent is utilized.
-    |
     | Supported: "session"
     |
     */
@@ -39,6 +35,11 @@ return [
         'web' => [
             'driver' => 'session',
             'provider' => 'users',
+        ],
+
+        'client' => [ // ✅ Добавляем guard для клиентов
+            'driver' => 'session',
+            'provider' => 'clients',
         ],
     ],
 
@@ -62,13 +63,13 @@ return [
     'providers' => [
         'users' => [
             'driver' => 'eloquent',
-            'model' => env('AUTH_MODEL', App\Models\User::class),
+            'model' => App\Models\User::class,
         ],
 
-        // 'users' => [
-        //     'driver' => 'database',
-        //     'table' => 'users',
-        // ],
+        'clients' => [ // ✅ Добавляем провайдера для клиентов
+            'driver' => 'eloquent',
+            'model' => App\Models\Client::class,
+        ],
     ],
 
     /*
@@ -93,7 +94,14 @@ return [
     'passwords' => [
         'users' => [
             'provider' => 'users',
-            'table' => env('AUTH_PASSWORD_RESET_TOKEN_TABLE', 'password_reset_tokens'),
+            'table' => 'password_reset_tokens',
+            'expire' => 60,
+            'throttle' => 60,
+        ],
+
+        'clients' => [ // ✅ Настройки сброса пароля для клиентов
+            'provider' => 'clients',
+            'table' => 'password_reset_tokens',
             'expire' => 60,
             'throttle' => 60,
         ],

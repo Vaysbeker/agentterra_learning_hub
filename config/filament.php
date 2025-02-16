@@ -71,6 +71,21 @@ return [
 
     'cache_path' => base_path('bootstrap/cache/filament'),
 
+    'panels' => [
+        'admin' => [
+            'id' => 'admin',
+            'path' => 'admin',
+            'middleware' => ['auth'],
+        ],
+        'client' => [
+            'id' => 'client',
+            'path' => 'client',
+            'middleware' => ['auth'],
+        ],
+    ],
+
+
+
     /*
     |--------------------------------------------------------------------------
     | Livewire Loading Delay
