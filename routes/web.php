@@ -5,6 +5,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Filament\Resources\CourseLessonResource\Pages\ViewCourseLesson;
 use App\Http\Controllers\ClientAuthController;
+use App\Http\Controllers\InstallerController;
+
 
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -44,3 +46,7 @@ Route::middleware('guest')->group(function () {
     Route::get('/client/login', [ClientAuthController::class, 'showLoginForm'])->name('client.login');
     Route::post('/client/login', [ClientAuthController::class, 'login']);
 });
+
+Route::get('/install', [InstallerController::class, 'index'])->name('install.index');
+Route::get('/install/step2', [InstallerController::class, 'step2'])->name('install.step2');
+Route::post('/install', [InstallerController::class, 'install'])->name('install.process');
